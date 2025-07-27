@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DreamPath Consultancy</title>
+   
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+      color: #e0f7fa;
+      overflow-x: hidden;
+    }
+    nav {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      background: rgba(15, 32, 39, 0.85);
+      backdrop-filter: blur(6px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      z-index: 10;
+      perspective: 600px; /* Enable 3D perspective */
+    }
+    nav .logo {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #1de9b6;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1.5rem;
+    }
+    nav ul li a {
+      color: #e0f7fa;
+      text-decoration: none;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      font-weight: 500;
+      display: inline-block;
+      transform-style: preserve-3d;
+      will-change: transform;
+      padding: 0.25rem 0.5rem;
+      border-radius: 5px;
+      backface-visibility: hidden;
+      user-select: none;
+    }
+    nav ul li a:hover {
+      /* 3D tilt on hover */
+      transform: rotateX(10deg) rotateY(10deg) translateZ(10px);
+      box-shadow:
+        0 0 8px #1de9b6,
+        0 0 20px #1de9b6;
+      color: #1de9b6;
+    }
+
+    header {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      animation: fadeInZoom 1.5s ease-out;
+      overflow: hidden;
+    }
+    header video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+      filter: brightness(0.5);
+    }
+    header h1 {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: #ffffff;
+    }
+    header p {
+      font-size: 1.6rem;
+      color: #b2dfdb;
+    }
+    section {
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(8px);
+      border-radius: 15px;
+      padding: 3rem;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+      transform: translateY(50px);
+      opacity: 0;
+      animation: slideInUp 1s ease-out forwards;
+    }
+    .container:nth-child(2) { animation-delay: 0.3s; }
+    .container:nth-child(3) { animation-delay: 0.6s; }
+    .container:nth-child(4) { animation-delay: 0.9s; }
+    .container:nth-child(5) { animation-delay: 1.2s; }
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      color: #1de9b6;
+    }
+    p {
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: #e0f2f1;
+    }
+    footer {
+      background-color: rgba(15, 32, 39, 0.85);
+      padding: 2rem;
+      text-align: center;
+      font-size: 0.9rem;
+      animation: fadeIn 2s ease-out;
+      color: #80cbc4;
+    }
+    .testimonial {
+      font-style: italic;
+      margin-top: 1.5rem;
+    }
+    .testimonial::before {
+      content: "\201C";
+      font-size: 2rem;
+      vertical-align: top;
+      color: #1de9b6;
+    }
+
+    /* 3D cube styles for About Us */
+    .about-flex {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+      text-align: left;
+    }
+    .about-text {
+      flex: 1 1 400px;
+    }
+    .cube-container {
+      flex: 1 1 300px;
+      perspective: 800px;
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .cube {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      transform-style: preserve-3d;
+      animation: rotateCube 10s linear infinite;
+    }
+    .face {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, #1de9b6, #00bfa5);
+      border: 2px solid #00bfa5;
+      color: #004d40;
+      font-weight: bold;
+      font-size: 3rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset 0 0 15px rgba(0,0,0,0.2);
+      user-select: none;
+      border-radius: 10px;
+    }
+    .face.front  { transform: translateZ(75px); }
+    .face.back   { transform: rotateY(180deg) translateZ(75px); }
+    .face.right  { transform: rotateY(90deg) translateZ(75px); }
+    .face.left   { transform: rotateY(-90deg) translateZ(75px); }
+    .face.top    { transform: rotateX(90deg) translateZ(75px); }
+    .face.bottom { transform: rotateX(-90deg) translateZ(75px); }
+
+    @keyframes rotateCube {
+      from { transform: rotateX(0deg) rotateY(0deg); }
+      to { transform: rotateX(360deg) rotateY(360deg); }
+    }
+
+    /* Services section flex + pyramid */
+    .services-flex {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+      text-align: left;
+    }
+    .services-text {
+      flex: 1 1 400px;
+    }
+    .pyramid-container {
+      flex: 1 1 300px;
+      perspective: 800px;
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .pyramid {
+      position: relative;
+      width: 150px;
+      height: 150px;
+      transform-style: preserve-3d;
+      animation: rotatePyramid 12s linear infinite;
+      transform-origin: center bottom;
+    }
+    /* Pyramid faces - triangles using borders */
+    .pyramid .face {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 0 75px 130px 75px;
+      border-color: transparent transparent #00bfa5 transparent;
+      opacity: 0.85;
+      box-shadow: 0 0 15px #1de9b6;
+      filter: drop-shadow(0 0 8px #1de9b6);
+      transform-origin: 50% 100%;
+      backface-visibility: visible;
+      border-radius: 10px;
+    }
+    /* Position each face around center to form pyramid */
+    .pyramid .face.front {
+      transform: translateZ(50px) rotateX(15deg);
+      border-color: transparent transparent #1de9b6 transparent;
+    }
+    .pyramid .face.right {
+      transform: rotateY(90deg) translateZ(50px) rotateX(15deg);
+      border-color: transparent transparent #00bfa5 transparent;
+    }
+    .pyramid .face.left {
+      transform: rotateY(-90deg) translateZ(50px) rotateX(15deg);
+      border-color: transparent transparent #00bfa5 transparent;
+    }
+    .pyramid .face.back {
+      transform: rotateY(180deg) translateZ(50px) rotateX(15deg);
+      border-color: transparent transparent #00796b transparent;
+    }
+    @keyframes rotatePyramid {
+      from {
+        transform: rotateX(0deg) rotateY(0deg);
+      }
+      to {
+        transform: rotateX(360deg) rotateY(360deg);
+      }
+    }
+
+    /* Contact section flex + wireframe sphere */
+    .contact-flex {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4rem;
+      flex-wrap: wrap;
+      text-align: left;
+    }
+    .contact-text {
+      flex: 1 1 400px;
+    }
+    .sphere-container {
+      flex: 1 1 300px;
+      perspective: 800px;
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .sphere {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      transform-style: preserve-3d;
+      animation: rotateSphere 15s linear infinite;
+    }
+    /* Create wireframe sphere with circles */
+    .circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 160px;
+      height: 160px;
+      margin: -80px 0 0 -80px;
+      border: 2px solid #1de9b6;
+      border-radius: 50%;
+      box-shadow: 0 0 15px #1de9b6;
+      opacity: 0.7;
+    }
+    .circle.horizontal {
+      transform: rotateX(90deg);
+    }
+    .circle.vertical1 {
+      transform: rotateY(0deg);
+    }
+    .circle.vertical2 {
+      transform: rotateY(45deg);
+    }
+    .circle.vertical3 {
+      transform: rotateY(90deg);
+    }
+    .circle.vertical4 {
+      transform: rotateY(135deg);
+    }
+    @keyframes rotateSphere {
+      from {
+        transform: rotateX(0deg) rotateY(0deg);
+      }
+      to {
+        transform: rotateX(360deg) rotateY(360deg);
+      }
+    }
+
+    @keyframes fadeInZoom {
+      0% { opacity: 0; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideInUp {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">DreamPath</div>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#services">Services</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#testimonials">Testimonials</a></li>
+      <li><a href="#gallery" class="hover:text-cyan-500 transition-colors duration-300">Gallery</a></li>
+    </ul>
+  </nav>
+
+  <header>
+    <video autoplay muted loop playsinline>
+      <source src="videoc.mp4" type="video/mp4" />
+      Your browser does not support the video tag.
+    </video>
+    <h1>DreamPath Consultancy</h1>
+    <p>Your Gateway to Global Education & Success</p>
+  </header>
+
+  <section id="about">
+    <div class="container about-flex">
+      <div class="about-text">
+        <h2>About Us</h2>
+        <p>At DreamPath, we specialize in guiding students and professionals to achieve their international dreams. With decades of combined expertise, our team provides personalized counseling and solutions to simplify your journey abroad.</p>
+      </div>
+      <div class="cube-container">
+        <div class="cube">
+          <div class="face front">D</div>
+          <div class="face back">P</div>
+          <div class="face right">C</div>
+          <div class="face left">S</div>
+          <div class="face top">3D</div>
+          <div class="face bottom">★</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services">
+    <div class="container services-flex">
+      <div class="services-text">
+        <h2>Our Services</h2>
+        <p>We offer comprehensive support including: Study Abroad Applications, Visa Assistance, Career Counseling, Test Preparation (IELTS, TOEFL, GRE), SOP Writing, and Post-Arrival Guidance.</p>
+      </div>
+      <div class="pyramid-container">
+        <div class="pyramid">
+          <div class="face front"></div>
+          <div class="face right"></div>
+          <div class="face left"></div>
+          <div class="face back"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+ <section id="gallery" class="gallery-section">
+  <div class="container">
+    <h3>Gallery</h3>
+    <div class="gallery-grid">
+      <div class="gallery-item">
+        <img src="imgc.jpg" alt="Gallery Image 1" />
+      </div>
+      <div class="gallery-item">
+        <img src="img2c.jpg" alt="Gallery Image 2" />
+      </div>
+      <div class="gallery-item">
+        <img src="img3c.jpg" alt="Gallery Image 3" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .gallery-section {
+    padding: 2rem 1.5rem;
+    background: linear-gradient(to bottom, #bfdbfe, #e0f2fe, #ffffff);
+    color: #0c4a6e;
+  }
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  .gallery-section h3 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+  }
+  .gallery-item {
+    overflow: hidden;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgb(29 78 216 / 0.3);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background: white;
+  }
+  .gallery-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgb(29 78 216 / 0.6);
+  }
+ .gallery-item img {
+  width: 100%;
+  height: 160px; /* increased from 120px */
+  object-fit: cover;
+  display: block;
+}
+
+/* Responsive adjustment for smaller screens */
+@media (max-width: 480px) {
+  .gallery-item img {
+    height: 120px; /* increased from 90px */
+  }
+}
+</style>
+
+
+
+
+  <section id="contact">
+    <div class="container contact-flex">
+      <div class="contact-text">
+        <h2>Contact Us</h2>
+        <p>Email: info@dreampath.com<br />Phone: +977-123456789<br />Location: Mid-Baneshwor, Kathmandu</p>
+      </div>
+      <div class="sphere-container">
+        <div class="sphere">
+          <div class="circle horizontal"></div>
+          <div class="circle vertical1"></div>
+          <div class="circle vertical2"></div>
+          <div class="circle vertical3"></div>
+          <div class="circle vertical4"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials">
+    <div class="container">
+      <h2>Testimonials</h2>
+      <p class="testimonial">DreamPath made my entire student visa process smooth and stress-free. Their guidance and commitment were exceptional! – <strong>Rohit Sharma</strong></p>
+      <p class="testimonial">Thanks to DreamPath, I’m now studying in Australia. The team truly cares about your success. – <strong>Priya Thapa</strong></p>
+    </div>
+  </section>
+<!-- Back to Top Button Wrapper -->
+<div class="back-to-top-wrapper" aria-label="Back to top button" role="button" tabindex="0">
+  <i class="fas fa-arrow-up arrow-icon" aria-hidden="true"></i>
+  <button id="backToTopBtn" title="Go to top" class="back-to-top-btn" aria-label="Scroll to top"></button>
+</div>
+
+<!-- Font Awesome for arrow icon -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/js/all.min.js"></script>
+
+<style>
+  /* Wrapper positions at bottom right and stacks items vertically */
+  .back-to-top-wrapper {
+    position: fixed;
+    right: 20px;
+    bottom: 40px;
+    display: none;              /* Hidden initially */
+    flex-direction: column;     /* vertical stack */
+    align-items: center;        /* horizontally center */
+    gap: 8px;                   /* space between arrow and button */
+    z-index: 1000;
+    cursor: pointer;
+  }
+
+  /* The arrow icon above the button */
+  .arrow-icon {
+    font-size: 2.5rem;
+    color: #1de9b6;
+    filter: drop-shadow(0 0 6px #00bfa5);
+    animation: bounceArrow 2s infinite ease-in-out;
+    user-select: none;
+  }
+
+  /* Round button below arrow */
+  .back-to-top-btn {
+    background: linear-gradient(135deg, #00bfa5, #1de9b6);
+    border: none;
+    padding: 14px 18px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(29, 233, 182, 0.6);
+    color: white;
+    font-size: 1.5rem;
+    width: 48px;
+    height: 48px;
+    transition: background 0.3s ease, transform 0.3s ease;
+    user-select: none;
+  }
+
+  /* Hover effect for the button */
+  .back-to-top-btn:hover {
+    background: linear-gradient(135deg, #1de9b6, #00bfa5);
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(29, 233, 182, 0.9);
+  }
+
+  /* Bounce animation for the arrow */
+  @keyframes bounceArrow {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+</style>
+
+<script>
+  const backToTopWrapper = document.querySelector('.back-to-top-wrapper');
+
+  // Show button when scrolling down 200px
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 200) {
+      backToTopWrapper.style.display = 'flex';
+    } else {
+      backToTopWrapper.style.display = 'none';
+    }
+  });
+
+  // Scroll to top on click
+  backToTopWrapper.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Allow keyboard accessibility (Enter and Space keys)
+  backToTopWrapper.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+</script>
+
+ 
+  <footer>
+    &copy; 2025 DreamPath Consultancy. All rights reserved.
+  </footer>
+</body>
+</html>
+<script>
+  // Smooth scroll for navigation links
+  document.querySelectorAll('nav ul li a').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const targetId = this.getAttribute('href').substring(1);
+      const targetElement = document.getElementById(targetId);
+      if (targetElement) {
+        targetElement.scrollIntoView({ behavior: 'smooth' });
+      }
+    });
+  });
+
+  
